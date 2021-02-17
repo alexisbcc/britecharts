@@ -228,12 +228,13 @@ define(function(require){
             xTicks = null,
             xAxisCustomFormat = null,
             locale,
-
+            
             shouldShowAllDataPoints = false,
             isAnimated = false,
             ease = d3Ease.easeQuadInOut,
             animationDuration = 1500,
             maskingRectangle,
+            hasMinimumValueScale = false,
 
             lineCurve = 'linear',
 
@@ -577,7 +578,7 @@ define(function(require){
         function buildYAxisScale() {
             let maxY = d3Array.max(dataByTopic, ({dates}) => d3Array.max(dates, getValue)),
                 minY = d3Array.min(dataByTopic, ({dates}) => d3Array.min(dates, getValue));
-            let yScaleBottomValue = minY < 0 ? minY : 0;
+            let yScaleBottomValue = minY < 0 || hasMinimumValueScale ? minY : 0;
             let yScaleTopValue = minY === 0 && maxY === 0 ? 1 : maxY;
 
             return d3Scale.scaleLinear()
@@ -1410,6 +1411,24 @@ define(function(require){
                 return isAnimated;
             }
             isAnimated = _x;
+
+            return this;
+        };
+
+         /**
+         * Gets or Sets the hasMinimumValueScale property of the chart, making yAxix bottom value
+         * to adjust to the minimum dataset value.
+         * By default this is 'false'
+         *
+         * @param  {Boolean} _x Desired minimum value flag
+         * @return { hasMinimumValueScale | module} Current hasMinimumValueScale flag or Chart module
+         * @public
+         */
+        exports.hasMinimumValueScale = function (_x) {
+            if (!arguments.length) {
+                return hasMinimumValueScale;
+            }
+            hasMinimumValueScale = _x;
 
             return this;
         };
